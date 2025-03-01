@@ -5,9 +5,9 @@ import torch
 import pandas as pd
 
 data_files = {
-    "train": "train.csv",
-    "validation": "val.csv",
-    "test": "test.csv",
+    "train": "../data/train.csv",
+    "validation": "../data/val.csv",
+    "test": "../data/test.csv",
 }
 dataset = load_dataset("csv", data_files=data_files)
 
@@ -62,7 +62,7 @@ val_dataset = tokenized_datasets["validation"]
 test_dataset = tokenized_datasets["test"]
 
 
-model = ElectraForSequenceClassification.from_pretrained("/root/autodl-tmp/code/enhancement/source/models/electra-large-discriminator", num_labels=2)
+model = ElectraForSequenceClassification.from_pretrained("electra-large-discriminator", num_labels=2)
 
 
 def compute_metrics(eval_pred):

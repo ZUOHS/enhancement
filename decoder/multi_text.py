@@ -6,12 +6,12 @@ import tiktoken
 from openai import OpenAI
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-file_path = 'enhancement.csv' 
+file_path = '../data/enhancement.csv' 
 output_file = 'result.csv'  
 
 client = OpenAI(
     api_key="",
-    base_url="https://ark.cn-beijing.volces.com/api/v3"
+    base_url=""
 )
 
 
@@ -55,7 +55,7 @@ def test(msg):
     while True:
         try:
             completion = client.chat.completions.create(
-                model="deepseek-v3-241226",
+                model="",
                 messages=[
                     {"role": "system",
                      "content": "You are a poetic assistant, skilled in giving resolution of enhancement."},
@@ -99,7 +99,7 @@ def process_row(row):
 
 
 df = pd.read_csv(file_path)
-df = df[df['fold'].astype(str) != '0'] 
+df = df[df['fold'].astype(str) == '1']  
 total_rows = len(df)
 
 

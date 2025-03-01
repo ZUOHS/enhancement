@@ -117,15 +117,10 @@ f1_positive = f1_score(labels, predicted_labels, pos_label=0)
 f1_negative = f1_score(labels, predicted_labels, pos_label=1)
 
 
-try:
-    auc = roc_auc_score(labels, predictions[:, 1])
-except ValueError:
-    auc = None
 
 
 
 print(f"Accuracy: {accuracy:.4f}")
-print(f"AUC: {auc:.4f}" if auc else "AUC: error")
 print(f"Positive Precision: {precision_positive:.4f}, Recall: {recall_positive:.4f}, F1: {f1_positive:.4f}")
 print(f"Negative Precision: {precision_negative:.4f}, Recall: {recall_negative:.4f}, F1: {f1_negative:.4f}")
 

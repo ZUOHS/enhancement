@@ -7,7 +7,7 @@ from openai import OpenAI
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 
-file_path = 'enhancement.csv' 
+file_path = '../data/enhancement.csv' 
 output_file = 'result.csv'  
 
 client = OpenAI(
@@ -64,7 +64,7 @@ def test(msg, example):
     while True:
         try:
             completion = client.chat.completions.create(
-                model="deepseek-v3-241226",
+                model="",
                 messages=[
                     {"role": "system",
                      "content": "You are a poetic assistant, skilled in giving resolution of enhancement."},
@@ -152,7 +152,7 @@ def process_row(row, df, roles):
 
 
 df = pd.read_csv(file_path)
-df = df[df['fold'].astype(str) != '0'] 
+df = df[df['fold'].astype(str) == '1']  
 total_rows = len(df)
 roles = ["\nrole:the creator is a Regular User", "\nrole:the creator is a Cross-application Developer", "\nrole:the creator is a Inner-application Developer"]
 num_threads = 8
