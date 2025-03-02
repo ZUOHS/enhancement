@@ -136,6 +136,8 @@ def build_model():
 
     text_features = Concatenate()(conv_blocks) if len(conv_blocks) > 1 else conv_blocks[0]
 
+    merged = Concatenate()([text_features])
+
     dropout = Dropout(0.5)(merged)
     dense = Dense(256, activation='relu')(dropout)
     output = Dense(1, activation='sigmoid')(dense)

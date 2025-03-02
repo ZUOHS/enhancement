@@ -55,7 +55,7 @@ def read_data(fold_id, FLAG, csv_file='../data/enhancement.csv'):
         test_df = df[(df['product'] == product_list[fold_id])]
         train_df = df[(df['product'] != product_list[fold_id])]
     else:
-        raise ValueError("FLAG 必须为 0 或 1")
+        raise ValueError("")
 
 
     for index, element in test_df.iterrows():

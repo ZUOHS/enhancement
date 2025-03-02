@@ -152,8 +152,8 @@ test_results_df.to_csv(output_path, index=False)
 
 
 metrics_df = pd.DataFrame({
-    "Metric": ["Accuracy", "AUC", "Positive Precision", "Positive Recall", "Positive F1", "Negative Precision", "Negative Recall", "Negative F1"],
-    "Value": [accuracy, auc, precision_positive, recall_positive, f1_positive, precision_negative, recall_negative, f1_negative],
+    "Metric": ["Accuracy", "Positive Precision", "Positive Recall", "Positive F1", "Negative Precision", "Negative Recall", "Negative F1"],
+    "Value": [accuracy, precision_positive, recall_positive, f1_positive, precision_negative, recall_negative, f1_negative],
 })
 metrics_path = "metrics.csv"
 metrics_df.to_csv(metrics_path, index=False)

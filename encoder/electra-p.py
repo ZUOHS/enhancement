@@ -11,7 +11,7 @@ data_files = {
 }
 dataset = load_dataset("csv", data_files=data_files)
 
-# 加载 XLNet 分词器
+
 tokenizer = ElectraTokenizer.from_pretrained("electra-base-discriminator")
 
 role_map = {
@@ -22,13 +22,12 @@ role_map = {
 
 
 def preprocess_function(examples):
-    # 先检查 role 是否为空，避免 role_map[r] 时报错
+
     id = ["" if text is None else text for text in examples["creator"]]
     role_texts = [role_map[r] if r in role_map else "" for r in examples["role"]]
     freq = ["" if text is None else text for text in examples["creator_freq"]]
     profile = [f"{i} {r} {f}" for i, r, f in zip(id, role_texts, freq)]
 
-    # 处理可能为空的 summary 和 description
     summaries = ["" if text is None else text for text in examples["summary"]]
     descriptions = ["" if text is None else text for text in examples["description"]]
 
@@ -40,10 +39,9 @@ def preprocess_function(examples):
     )
 
 
-# 对数据集进行分词处理
+
 tokenized_datasets = dataset.map(preprocess_function, batched=True)
 
-# 将标签映射为整数
 label_map = {
     "INVALID": 1,
     "DUPLICATE": 1,
@@ -59,20 +57,19 @@ def encode_labels(example):
     example["label"] = label_map[example["resolution"]]
     return example
 
-# 映射标签并移除不需要的列
+
 tokenized_datasets = tokenized_datasets.map(encode_labels)
 tokenized_datasets = tokenized_datasets.remove_columns(["id", "summary", "description", "resolution", "product", "role"])
 tokenized_datasets.set_format("torch")
 
-# 数据集分割
 train_dataset = tokenized_datasets["train"]
 val_dataset = tokenized_datasets["validation"]
 test_dataset = tokenized_datasets["test"]
 
-# 加载 XLNet 模型
+
 model = ElectraForSequenceClassification.from_pretrained("electra-base-discriminator", num_labels=2)
 
-# 定义评估指标
+
 def compute_metrics(eval_pred):
     logits, labels = eval_pred
     predictions = torch.argmax(torch.tensor(logits), dim=1).numpy()
@@ -83,7 +80,7 @@ def compute_metrics(eval_pred):
         "f1": f1_score(labels, predictions, average="binary", pos_label=0),
     }
 
-# 设置训练参数
+
 training_args = TrainingArguments(
     output_dir="./results",
     eval_strategy="epoch",
@@ -99,7 +96,7 @@ training_args = TrainingArguments(
 )
 
 
-# 定义 Trainer
+
 trainer = Trainer(
     model=model,
     args=training_args,
@@ -109,22 +106,14 @@ trainer = Trainer(
     compute_metrics=compute_metrics,
 )
 
-# 训练模型
+
 trainer.train()
 
-# 训练完成后保存模型
 
-
-print(f"训练 XLNet 模型结束")
-
-# 在测试集上评估模型，并保存结果到 CSV 文件
-print("正在评估测试集并保存结果到 CSV 文件...")
 predictions, labels, metrics = trainer.predict(test_dataset)
 
-# 转换预测结果为类别
 predicted_labels = torch.argmax(torch.tensor(predictions), dim=1).numpy()
 
-# 计算详细指标
 accuracy = accuracy_score(labels, predicted_labels)
 precision_positive = precision_score(labels, predicted_labels, pos_label=0)
 precision_negative = precision_score(labels, predicted_labels, pos_label=1)
@@ -159,8 +148,8 @@ test_results_df.to_csv(output_path, index=False)
 
 
 metrics_df = pd.DataFrame({
-    "Metric": ["Accuracy", "AUC", "Positive Precision", "Positive Recall", "Positive F1", "Negative Precision", "Negative Recall", "Negative F1"],
-    "Value": [accuracy, auc, precision_positive, recall_positive, f1_positive, precision_negative, recall_negative, f1_negative],
+    "Metric": ["Accuracy", "Positive Precision", "Positive Recall", "Positive F1", "Negative Precision", "Negative Recall", "Negative F1"],
+    "Value": [accuracy, precision_positive, recall_positive, f1_positive, precision_negative, recall_negative, f1_negative],
 })
 metrics_path = "metrics.csv"
 metrics_df.to_csv(metrics_path, index=False)
