@@ -6,6 +6,7 @@ import tiktoken
 from openai import OpenAI
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
+import os 
 
 file_path = '../data/enhancement.csv' 
 output_file = 'result.csv'  
@@ -143,10 +144,17 @@ def process_row(row, df, roles):
         'product': row['product'],
         'role': row['role']
     }
+    file_exists = os.path.isfile(output_file)  
     with csv_lock:
         with open(output_file, mode='a', encoding='utf-8', newline='') as result_file:
-            csv_writer = csv.DictWriter(result_file, fieldnames=['id', 'summary', 'description', 'resolution', 'predicted_resolution', 'is_correct', 'product', 'role'])
+            fieldnames = ['id', 'summary', 'description', 'resolution', 'predicted_resolution', 'is_correct', 'product', 'role']
+            csv_writer = csv.DictWriter(result_file, fieldnames=fieldnames)
+
+            if not file_exists:  
+                csv_writer.writeheader()
+
             csv_writer.writerow(result)
+
     return result
 
 
