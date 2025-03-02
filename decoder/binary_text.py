@@ -114,6 +114,8 @@ for batch_start in range(0, total_rows, batch_size):
         with open(output_file, mode='a', encoding='utf-8', newline='') as result_file:
             fieldnames = ['id', 'summary', 'description', 'resolution', 'predicted_resolution', 'is_correct']
             csv_writer = csv.DictWriter(result_file, fieldnames=fieldnames)
+            if batch_start == 0:
+                csv_writer.writeheader()
 
             for future in as_completed(future_to_row):
                 result = future.result()
